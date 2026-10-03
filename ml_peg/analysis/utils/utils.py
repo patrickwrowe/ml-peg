@@ -13,7 +13,11 @@ from ase.io import read, write
 from matplotlib import colormaps
 from matplotlib.colors import Colormap
 import numpy as np
-from sklearn.metrics import mean_absolute_error, mean_squared_error
+from sklearn.metrics import (
+    mean_absolute_error,
+    mean_absolute_percentage_error,
+    mean_squared_error,
+)
 from yaml import safe_load
 
 from ml_peg.app.utils.utils import (
@@ -164,6 +168,27 @@ def mae(ref: list, prediction: list) -> float:
     if np.isnan(np.sum(prediction)):
         return np.nan
     return mean_absolute_error(ref, prediction)
+
+
+def mape(ref: list, prediction: list) -> float:
+    """
+    Get mean absolute percentage error.
+
+    Parameters
+    ----------
+    ref
+        Reference data.
+    prediction
+        Predicted data.
+
+    Returns
+    -------
+    float
+        Mean absolute percentage error, as a percentage.
+    """
+    if np.isnan(np.sum(prediction)):
+        return np.nan
+    return mean_absolute_percentage_error(ref, prediction) * 100
 
 
 def rmse(ref: list, prediction: list) -> float:
@@ -600,6 +625,9 @@ def get_table_style(
         contrast_with_black = (luminance + 0.05) / 0.05
         contrast_with_white = 1.05 / (luminance + 0.05)
         return "black" if contrast_with_black >= contrast_with_white else "white"
+
+    if not data:
+        return []
 
     style_data_conditional: list[TableRow] = []
 
